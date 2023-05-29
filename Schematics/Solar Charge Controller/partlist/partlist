@@ -1,0 +1,72 @@
+Partlist
+
+Exported from Arduino MEGA Reference Design.brd at 3/25/2020 11:22 AM
+
+EAGLE Version 9.6.0 Copyright (c) 1988-2020 Autodesk, Inc.
+
+Assembly variant: 
+
+Part          Value           Package       Library      Position (mil)        Orientation
+
+ADCH                          1X08          pinhead      (3250 100)            R0
+ADCL                          1X08          pinhead      (2350 100)            R0
+C1            100n            C0805RND      rcl          (2550 725)            R0
+C2            22p             C0805RND      rcl          (1520 380)            R0
+C3            22p             C0805RND      rcl          (1520 480)            R0
+C4            100n            C0805RND      rcl          (1040 1740)           R0
+C5            100n            C0805RND      rcl          (640 740)             R0
+C6            100u            SMC_D         rcl          (900 240)             R270
+C7            100u            SMC_D         rcl          (1120 240)            R270
+C9            100n            C0805RND      rcl          (2535 1475)           R180
+C10           100n            C0805RND      rcl          (1520 280)            R0
+C11           22p             C0805RND      rcl          (1040 640)            R0
+C12           100n            C0805RND      rcl          (1040 836)            R180
+C13           100n            C0805RND      rcl          (840 640)             R180
+C14           100n            C0805RND      rcl          (640 1040)            R0
+C15           100n            C0805RND      rcl          (600 1820)            R0
+C16           100n            C0805RND      rcl          (780 1820)            R0
+C17           100n            C0805RND      rcl          (840 1040)            R0
+COMMUNICATION                 1X08          pinhead      (3050 2000)           R180
+D1                            SMB           diode        (680 360)             R270
+F1            500mA           L1812         rcl          (720 1200)            R0
+IC2           ATMEGA1280-16AU TQFP100       atmel-2005   (2000 1116)           R0
+IC4           MC33269D-5.0    DPACK         linear       (275 700)             R90
+IC5           MC33269ST-5.0T3 SOT223        linear       (340 700)             R90
+IC6           FT232RL         SSOP28        SmartPrj     (720 1540)            R0
+IC7           LM358D          SO08          linear       (740 890)             R270
+ICSP          ICSP            2X03          pinhead      (2555 1100)           R270
+JP1                           2X08          pinhead      (3750 1550)           R90
+JP2                           2X08          pinhead      (3750 750)            R90
+JP3                           1X01          pinhead      (3700 2000)           R0
+JP4                           1X01          pinhead      (3800 2000)           R0
+JP5                           1X01          pinhead      (3700 300)            R0
+JP6                           1X01          pinhead      (3800 300)            R0
+L                             0805RND       led          (1040 1540)           R180
+POWER                         1X06          pinhead      (1550 100)            R0
+PWMH                          1X08          pinhead      (1300 2000)           R180
+PWML                          1X08          pinhead      (2150 2000)           R180
+PWR                           0805RND       led          (3000 1460)           R180
+Q2            16MHz           HC49/S        crystal      (1700 520)            R90
+R1            1K              R0805RND      rcl          (1040 1640)           R180
+R2            10k             R0805RND      rcl          (3180 1460)           R180
+R3            10k             R0805RND      rcl          (3180 1560)           R180
+R5            10K             R0805RND      rcl          (1040 740)            R0
+R6            10k             R0805RND      rcl          (840 740)             R180
+R7            1k              R0805RND      rcl          (1040 1440)           R0
+R8            1K              R0805RND      rcl          (3180 1360)           R180
+R9            1k              R0805RND      rcl          (1040 1140)           R0
+R10           10k             R0805RND      rcl          (640 640)             R180
+R11           1K              RCL_0805RND   SmartPrj     (1040 1040)           R0
+R12           1K              RCL_0805RND   SmartPrj     (1040 940)            R0
+RESET-EN                      SJ            jumper       (1200 825)            R270
+RX                            0805RND       led          (1040 1240)           R180
+S1                            B3F-10XX      switch-omron (2920 1100)           R180
+T1            NDT2955         SOT223        zetex        (280 1080)            R90
+T2            FDN340P         SOT-23        zetex        (280 1080)            R270
+TX                            0805RND       led          (1040 1340)           R180
+U$1           FIDUCIALMOUNT   FIDUCIA-MOUNT SmartPrj     (2319 1603)           R0
+U$2           FIDUCIALMOUNT   FIDUCIA-MOUNT SmartPrj     (1445 695)            R0
+U$3           FIDUCIALMOUNT   FIDUCIA-MOUNT SmartPrj     (780 2000)            R0
+X2            DC21MMX         DC-21MM       powersupply  (210 330)             R90
+X3                            JP4           jumper       (1250 1310)           R270
+X4                            PN61729       SmartPrj     (150 1500)            R270

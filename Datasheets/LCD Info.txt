@@ -1,0 +1,3 @@
+LCD Info
+
+https://www.buydisplay.com/arduino-5-inch-tft-lcd-touch-screen-shield-ra8875-library-for-mega-due-uno

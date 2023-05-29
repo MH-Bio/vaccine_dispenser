@@ -1,0 +1,3 @@
+temp_sensor		KEYWORD1
+internal_temp	KEYWORD2
+external_temp	KEYWORD2

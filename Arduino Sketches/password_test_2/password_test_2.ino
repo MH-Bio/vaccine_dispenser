@@ -1,0 +1,471 @@
+//********************************** Libraries that are to be used **********************************
+#include <LiquidCrystal.h> // LIBRARY TO ACCESS THE LCD DISPLAY
+#include <EventBuffer.h>
+#include <Keypad.h>
+#include <EventBuffer.h>
+
+
+//******************************************** LCD Stuff ********************************************
+const int rs = 13, en = 12, d4 = 11, d5 = 10, d6 = 9, d7 = 8; // declares which pins are plugged in where
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7); // Sets up which pins go to the LCD display
+
+
+//***************************************** Password Arrays *****************************************
+char userID [4] = {95, 95, 95, 95}; // A blank array that will have four slots for a user input
+char userIDCheck [4] = {'1', '2', '3', '4'}; // This is the "Correct" user ID that will be compared to the input
+boolean iDFlag [4] = {false, false, false, false}; // Used to check which place we are in the loop
+char passwordInput [4] = {95, 95, 95, 95}; // Characters in the array that indicate blanks
+char key [4] = {}; // empty array of char type keys
+
+
+//******************************************** Pointers *********************************************
+
+
+
+//******************************************* keypadCharacterpad Stuff ******************************************
+const byte ROWS = 4; // rows
+const byte COLS = 3; // columns
+
+char keys[ROWS][COLS] = {
+  {'1', '2', '3'},
+  {'4', '5', '6'},
+  {'7', '8', '9'},
+  {'*', '0', '#'}
+};
+
+byte rowPins[ROWS] = {45, 47, 49, 51}; //connect to the row pinouts of the keypadCharacterpad
+byte colPins[COLS] = {46, 48, 50}; //connect to the column pinouts of the keypadCharacterpad
+
+Keypad keypad = Keypad( makeKeymap(keys), rowPins, colPins, ROWS, COLS );
+
+
+//****************************************** Joystick Stuff *****************************************
+const int SW_pin = 53; // digital pin that the joystick is plugged into
+const int X_pin = 0; // analog pin connected to VRx
+const int Y_pin = 1; // analog pin connected to VRy
+float joystickX = 0.0;
+float joystickY = 0.0;
+
+
+//***************************************** Global Variables ****************************************
+int menuCount = 0; // used to select which screen you are working in
+char keypadCharacterpadInput = 0;
+int keypadCharacterpadSelection = 0;
+int iDEntry = 0;
+int currentMenu = 0;
+
+
+//**************************************** Language Variables ***************************************
+bool englishFlag = true;
+bool japaneseFlag = false; //日の丸です！
+bool spanishFlag = false;
+
+//***************************************************************************************************
+//***************************************************************************************************
+//********************************************** Setup **********************************************
+//***************************************************************************************************
+//***************************************************************************************************
+void setup() {
+  Serial.begin(9600); // opens serial port, sets data rate to 9600 bps
+  lcd.begin(16, 2); // set up the LCD's number of columns and rows
+
+  pinMode(SW_pin, INPUT);
+  digitalWrite(SW_pin, HIGH);
+  Serial.begin(9600);
+
+
+  // Welcome Message
+  lcd.setCursor(0, 0); // sets cursor at column 0, row 0
+  lcd.print("Welcome To");
+  lcd.setCursor(0, 1); // sets cursor at column 0, row 1
+  lcd.print("  Arduino   ");
+  lcd.clear();
+}
+
+//***************************************************************************************************
+//***************************************************************************************************
+//*********************************************** Loop **********************************************
+//***************************************************************************************************
+//***************************************************************************************************
+void loop() {
+
+  delay(250);
+
+  joystickX = analogRead(X_pin);  // Allows the joystick to work in the X direction
+
+  if (currentMenu < 10) {
+
+    int mainMenu = menuSelect(joystickX, 1); // the number of menus is menu + 1, so 2 creates 3 menus
+
+    switch (mainMenu) {
+
+      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "to dispense" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      case 0:
+        char keyInput;
+        keyInput = keypad.getKey();
+        lcd.setCursor(0, 0);
+        lcd.clear();
+        lcd.print("To dispense");
+        lcd.setCursor(1, 1);
+        lcd.print("press #");
+        currentMenu = 1;
+        if (keyInput == 35) { // if the entered character is #
+          currentMenu = 10;
+          key[0] = 95; // resets keypadCharacterpad character.
+        }
+        else {
+          currentMenu = currentMenu; // if # isn't entered, do nothing.
+        }
+        break;
+
+      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ "settings" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      case 1:
+        lcd.setCursor(0, 0);
+        lcd.clear();
+        lcd.print("Settings");
+        currentMenu = 2;
+        break;
+    }
+  }
+
+  else if (currentMenu >= 10) { // Dispense submenu
+
+    int dispenseMenu = menuSelect(joystickX, 1);
+
+    switch (dispenseMenu) {
+
+      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ username input ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      case 0:
+        if (iDFlag[0] == false) {
+          key[0] = keypad.getKey();
+        }
+        else if (iDFlag[1] == false) {
+          key[1] = keypad.getKey();
+        }
+        else if (iDFlag[2] == false) {
+          key[2] = keypad.getKey();
+        }
+        else if (iDFlag[3] == false) {
+          key[3] = keypad.getKey();
+        }
+
+        if (key[0] != NO_KEY) {
+          userID[0] = key[0];
+          lcd.setCursor(0, 1); // sets cursor at column 0, row 1
+          lcdDisplay(userID, 1);
+        }
+        if (key[1] != NO_KEY) {
+          userID[1] = key[1];
+          lcd.setCursor(0, 1); // sets cursor at column 0, row 1
+          lcdDisplay(userID, 2);
+        }
+        if (key[2] != NO_KEY) {
+          userID[2] = key[2];
+          lcd.setCursor(0, 1); // sets cursor at column 0, row 1
+          lcdDisplay(userID, 3);
+        }
+        if (key[3] != NO_KEY) {
+          userID[3] = key[3];
+          lcd.setCursor(0, 1); // sets cursor at column 0, row 1
+          lcdDisplay(userID, 4);
+        }
+
+        break;  // this is the break for case 0
+
+      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ go back ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      case 1:
+        for (int x = 0; x < 4; x++) {
+          userID[x] = '_'; // resets userID for all values in the array
+        }
+
+        for (int x = 0; x < 4; x++) {
+          iDFlag[x] = false; // resets iDFlag for all values in the array
+        }
+
+        lcd.setCursor(0, 0);
+        lcd.clear();
+        lcd.print("To go back");
+        lcd.setCursor(1, 1);
+        lcd.print("press *");
+
+        int previousSelect = keypadCharacterpadDecoder(key);
+
+        if (previousSelect == 42) {
+          currentMenu = 1;
+        }
+
+        else {
+          currentMenu = currentMenu;
+        }
+
+        break;
+
+    } // switch(dispenseMenu) closing curly brace
+
+  } // dispense submenu closing curly brace
+
+} // loop closing curly brace
+
+//***************************************************************************************************
+//***************************************************************************************************
+//********************************************* Functions *******************************************
+//***************************************************************************************************
+//***************************************************************************************************
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ keypadCharacterpadDecoder ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// The keypadCharacterpadDecoder function takes an input from the keypadCharacter variable.  It converts an ASCII
+// input variable to a 0-9 integer.  # and * characters return their ASCII values.
+
+int keypadCharacterpadDecoder(int keypadCharacter) {
+
+  switch (keypadCharacter) {
+
+    case 35: // 35 is the ASCII character for #
+      keypadCharacterpadSelection = 35; // 95 is the ASCII character for _
+      break;
+
+    case 42: // 42 is the ASCII character for *
+      keypadCharacterpadSelection = 42;
+      break;
+
+    case 48: // 48 is the ASCII character for 0
+      keypadCharacterpadSelection = 48;
+      break;
+
+    case 49: // 49 is the ASCII character for 1
+      keypadCharacterpadSelection = 49;
+      break;
+
+    case 50: // 50 is the ASCII character for 2
+      keypadCharacterpadSelection = 50;
+      break;
+
+    case 51: // 51 is the ASCII character for 3
+      keypadCharacterpadSelection = 51;
+      break;
+
+    case 52: // 52 is the ASCII character for 4
+      keypadCharacterpadSelection = 52;
+      break;
+
+    case 53: // 53 is the ASCII character for 5
+      keypadCharacterpadSelection = 53;
+      break;
+
+    case 54: // 54 is the ASCII character for 6
+      keypadCharacterpadSelection = 54;
+      break;
+
+    case 55: // 55 is the ASCII character for 7
+      keypadCharacterpadSelection = 55;
+      break;
+
+    case 56: // 56 is the ASCII character for 8
+      keypadCharacterpadSelection = 56;
+      break;
+
+    case 57: // 57 is the ASCII character for 9
+      keypadCharacterpadSelection = 57;
+      break;
+
+    default:
+      keypadCharacterpadSelection = keypadCharacterpadSelection;
+      break;
+  }
+  return keypadCharacterpadSelection; // returns the keypadCharacterpad number
+}
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ menuSelect ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// This function will allow the user to select a menu based on the joystick position, and return a
+// variable which will be used to display the correct menu.  The returned variable is called
+// menuCount.  This function allows you to control the total number of menus.
+
+int menuSelect(float joystickX, int totalMenus) {  // inputs are joystick position and # of menus
+  if (joystickX > 1000) {
+    menuCount = menuCount + 1;  // upon moving the joystick increase the menu variable by 1
+    keypadCharacterpadSelection = 0;  // clear the keypadCharacterpad Selection variable
+    if (menuCount > totalMenus) {
+      menuCount = totalMenus; // the menuCount can't go over the total number of menus
+    }
+  }
+  else if (joystickX < 50) {
+    menuCount = menuCount - 1;  // decreases the value of menu count by 1
+    keypadCharacterpadSelection = 0;
+    if (menuCount < 0) {
+      menuCount = 0;  // menu count can't go below 0
+    }
+  }
+
+  else {
+    menuCount = menuCount;  // if the joystick didn't move then keep the menu the same
+  }
+
+  return menuCount;  // return which menu you are working in.
+}
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ arrayEntry ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// This function will allow the user to take input and store the value in an array.
+//void arrayEntry(int *decoder, char *ID) {
+//
+//  char entrySelection = '~'; // 126 is the ASCII character for ~
+//  char keypadCharacterpad = 126;
+//  keypadCharacter = 126;
+//
+//  while (entrySelection == '~') {
+//    keypadCharacter = *decoder;
+//    entrySelection = keypadCharacter;
+//  }
+//
+//  *ID = entrySelection;
+//
+//}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ lcdDisplay ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// This function, when called will display any number of digits on the LCD display
+void lcdDisplay(char Array[], int digits) {
+  switch (digits) {
+    case 1:
+      lcd.print(Array[0]);
+      break;
+
+    case 2:
+      lcd.print(Array[0]);
+      lcd.print(Array[1]);
+      break;
+
+    case 3:
+      lcd.print(Array[0]);
+      lcd.print(Array[1]);
+      lcd.print(Array[2]);
+      break;
+
+    case 4:
+      lcd.print(Array[0]);
+      lcd.print(Array[1]);
+      lcd.print(Array[2]);
+      lcd.print(Array[3]);
+      break;
+  }
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ pound2Underscore ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// This function will convert the ASCII input # to _
+void pound2Underscore(char keypadArray[], int x) {
+  if (keypadArray[x] == 35) {
+    keypadArray[x] = 95;
+  }
+  else {
+    keypadArray[x] = keypadArray[x];
+  }
+}
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ idFlagCount ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Counts the number of true variables in the iDFlag array.  For every true, we add a 1, for every
+// false, we add a 0.  We then reutrn the total value of the count.
+int idFlagCount() {
+
+  int counter = 0;
+
+  for (int i = 0; i < 4; i++) {
+    counter = counter + iDFlag[i]; // counts the number of trues in the ID flag array, if true then we add a 1
+  }
+
+  return counter;
+
+}
+
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ wait4Input ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// This function essentially stops the code while it is waiting for the user to enter something.  It
+// returns whatever you pressed for the button.
+//int wait4Input() {
+//  int buttonPress = 95;
+//
+//  while (buttonPress == 95 || buttonPress == 35 || buttonPress == 42) {
+//    buttonPress = keypadCharacterpadDecoder(keypadCharacter);;
+//  }
+//
+//  return buttonPress;
+
+//}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ arrayCheck ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Compares two arrays against each other, used for user ID and password input
+
+bool arrayCheck(char array1[], char array2[]) {
+
+  bool checkArrays [4] = {false, false, false, false};
+  int counter = 0;
+  bool finalCheck; // this is what the function will return
+
+  for (int i = 0; i < 4; i++) {
+
+    if (array1[i] == array2[i]) {
+      checkArrays[i] = true;
+    }
+
+    else {
+      checkArrays[i] = false;
+    }
+
+  }
+
+  for (int i = 0; i < 4; i++) {
+    counter = counter + checkArrays[i]; // counts the number of trues in the ID flag array, if true then we add a 1
+  }
+
+  if (counter == 4) {
+    finalCheck = true;
+  }
+
+  else {
+    finalCheck = false;
+  }
+
+  return finalCheck; // returns the final check variable as either true or false
+
+}
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ hasInput ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// returns true or false to continue the loop
+bool hasInput(char checkedArray[], int x) {
+
+  bool truthChecker;
+
+  if (checkedArray[x] == 48 || checkedArray[x] == 49 || checkedArray[x] == 50 || checkedArray[x] == 51 || checkedArray[x] == 52 || checkedArray[x] == 53 || checkedArray[x] == 54 || checkedArray[x] == 55 || checkedArray[x] == 56 || checkedArray[x] == 57) {// if the value of the array isn't # or _
+    truthChecker = true;
+  }
+  else {
+    truthChecker = false;
+  }
+
+  return truthChecker;
+
+}
+//***************************************************************************************************
+//*********************************************** Notes *********************************************
+//***************************************************************************************************
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ASCII Cheat Sheet ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// # => 35
+// * => 42
+// 0 => 48
+// 1 => 49
+// 2 => 50
+// 3 => 51
+// 4 => 52
+// 5 => 53
+// 6 => 54
+// 7 => 55
+// 8 => 56
+// 9 => 57
+// _ => 95
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Links ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Micro SD Card Tutorial: https://www.instructables.com/id/Micro-SD-Card-Tutorial/
+// Writing functions: https://www.arduino.cc/en/Reference/FunctionDeclaration
+// ASCII chart: https://theasciicode.com.ar/ascii-control-characters/null-character-ascii-code-0.html
+// Adafruit keypadCharacterpad Demo: https://www.adafruit.com/product/3845

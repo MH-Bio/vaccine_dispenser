@@ -1,0 +1,45 @@
+1 power supply connection
+
+//5V connect 5V DC power supply
+
+//GND earth
+
+2 LCD screen data line wiring
+
+This module / default data bus type parallel 8 bit mode
+
+//8 bit mode connection: 8 bit mode 9341 modules to connect the 8 bit bus, that is, the:
+
+LCD_D0 microcontroller PB8 LCD screen / correspondence
+
+LCD_D1 microcontroller PB9 LCD screen / correspondence
+
+LCD_D2 microcontroller PB10 LCD screen / correspondence
+
+LCD_D3 microcontroller PB11 LCD screen / correspondence
+
+LCD_D4 microcontroller PB12 LCD screen / correspondence
+
+LCD_D5 microcontroller PB13 LCD screen / correspondence
+
+LCD_D6 microcontroller PB14 LCD screen / correspondence
+
+LCD_D7 microcontroller PB15 LCD screen / correspondence
+
+3 LCD screen control cable wiring
+
+//LCD_RST PC5 / / reset signal
+
+//LCD_CS PC9 / chip select signal
+
+//LCD_RS PC8 / / / data register selection signal
+
+//LCD_WR PC7 / / write signal
+
+//LCD_RD PC6 / / read signal
+
+4 touch screen touch wiring
+
+/ / the module need to connect an external XPT2046 touch touch test sampling chip, so this procedure does not touch the test.
+
+/ / or module itself without touch not touch, can not connect

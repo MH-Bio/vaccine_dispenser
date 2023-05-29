@@ -1,0 +1,13 @@
+23/24 c = 136.7 mV - Old resistance values
+
+113/114 C reading (actual room temp is 23) = 564
+
+43.5 F (6.388C), currently reading at 19 C
+
+19 C = 116.7 mV
+
+18C  113.1mV
+
+17c = 109.2, 107.7, 106.9
+
+16c = 104.8
